@@ -159,8 +159,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 *.db
-route_list.txt
-
 #icons/
 #icons/!d.png
 #images/
@@ -168,8 +166,3 @@ route_list.txt
 *.png
 *.jpg
 *.jpeg
-!d.png
-!undefined.png
-venv/
-__pycache__/
-app.db
