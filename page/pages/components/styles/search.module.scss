@@ -1,0 +1,86 @@
+._ {
+    padding: 15px;
+    padding-bottom: 0;
+}
+.searchBox {
+    position: relative;
+    border: 1px solid #eee;
+    outline: 0px solid #eee;
+    height: 50px;
+    border-radius: 10px;
+}
+.searchInput {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    border-radius: 10px;
+    font-size: 18px;
+    padding-left: 42px;
+    transition: outline 0.3s ease;
+    border: none;
+    outline: none;
+}
+/*.searchBox:is(:active,:focus) {
+    outline: 3px solid #eee;
+}*/
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 10px 0;
+    margin-bottom: 0;
+}
+.blank {
+    width: 2px;
+    height: 39px;
+    background: #eee;
+    margin: 0 10px;
+    margin-right: 20px;
+}
+.tag {
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #eee;
+    display: flex;
+    border-radius: 30px;
+    padding: 8px 24px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+    .categoryName {
+        margin: 0;
+        margin-right: 8px;
+    }
+    .categoryNumber {
+        margin: 0;
+    }
+    &.active {
+        background-color: #2d2d2d;
+        color: #eee;
+    }
+}
+
+.info {
+    display: flex;
+    position: absolute;
+    top: 14px;
+    left: 10px;
+    pointer-events: none;
+    user-select: none;
+    .label {
+        position: relative;
+        bottom: 0;
+        font-weight: 600;
+        font-size: 16px;
+        margin-left: 8px;
+        transition: bottom .2s ease, font-size .3s ease;
+    }
+}
+.searchInput:is(:active,:focus) ~ .info, .active {
+    .label {
+        position: relative;
+        bottom: 12px;
+        font-size: 8px;
+    }
+}

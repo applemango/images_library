@@ -1,0 +1,144 @@
+.main__ {
+    display: block;
+    padding: 15px;
+    .input_title {
+        width: 100%;
+        height: 35px;
+        font-size: 18px;
+        padding-left: 10px;
+        border: 1px solid #eee;
+        margin-bottom: 10px;
+        color: #555;
+        outline: none;
+        border-radius: 5px;
+    }
+    .input_title:focus-visible {
+        outline: 1px solid #eee;
+    }
+    .input_body {
+        padding: 5px;
+        resize: none;
+        border: 1px solid #eee;
+        border-radius: 5px;
+        width: 100%;
+        height: 300px;
+        font-size: 14px;
+        color: #555;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    }
+    .input_body:focus-visible {
+        outline: 1px solid #eee;
+    }
+    .input_file::-webkit-file-upload-button {
+        visibility: hidden;
+    }
+    .input_file {
+        border: 1px solid #eee;
+        border-radius: 5px;
+        width: 100%;
+        height: 100px;
+        position: relative;
+        color: #fff;
+        background-color: #fff;
+        cursor: pointer;
+    }
+    .input_file_ {
+        pointer-events: none;
+        position: relative;
+        width: 100%;
+        .input_file__ {
+            width: 100%;
+            position: absolute;
+            bottom: 30px;
+            div {
+                display: flex;
+                margin: 0 auto;
+                p.active {
+                    color: #00b341;
+                    word-break: break-all;
+                    background-color: transparent;
+                }
+                button {
+                    cursor: pointer;
+                    height: fit-content;
+                    padding: 6px 12px;
+                    margin: 5px;
+                    margin-left: 12px;
+                    color: #0070f3;
+                    border: 1px solid #0070f3;
+                    border-radius: 20px;
+                    position: relative;
+                    display: flex;
+                    top: 9px;
+                    background-color: #fff;
+                }
+                .logo {
+                    position: relative;
+                    top: 15px;
+                    margin-right: 5px;
+                    width: 24px;
+                    height: 24px;
+                    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20class%3D%22icon%20icon-tabler%20icon-tabler-file-upload%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20stroke-width%3D%221.5%22%20stroke%3D%22%2300b341%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Cpath%20stroke%3D%22none%22%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22%2F%3E%20%3Cpath%20d%3D%22M14%203v4a1%201%200%200%200%201%201h4%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2021h-10a2%202%200%200%201%20-2%20-2v-14a2%202%200%200%201%202%20-2h7l5%205v11a2%202%200%200%201%20-2%202z%22%20%2F%3E%20%3Cline%20x1%3D%2212%22%20y1%3D%2211%22%20x2%3D%2212%22%20y2%3D%2217%22%20%2F%3E%20%3Cpolyline%20points%3D%229%2014%2012%2011%2015%2014%22%20%2F%3E%3C%2Fsvg%3E')
+                }
+            }
+        }
+    }
+}
+
+.submit {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    border-top: 1px solid #eee;
+    button {
+        cursor: pointer;
+        padding: 8px 20px;
+        border: none;
+        outline: none;
+        background-color: #0070f3;
+        color: #fff;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+    .enable {
+        background-color: #0070f3;
+        color: #fff;
+    }
+    .disable {
+        background-color: #888;
+        color: #bbb;
+    }
+    .submit_loading {
+        color: #00b341;
+        margin: 0 10px;
+    }
+    .submit_error {
+        color: #f30032;
+        margin: 0 10px;
+    }
+}
+
+div.main__ div.input_file__ div.submits {
+    display: inline-block;
+    position: relative;
+    top: 15px;
+    > div {
+        border: none;
+        
+    }
+    .submit {
+        padding: 0;
+        button {
+            margin: 0;
+            top: 0;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            width: 90%;
+            z-index: 2;
+            cursor: default;
+            pointer-events: auto;
+        }
+    }
+}

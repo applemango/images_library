@@ -1,0 +1,35 @@
+.imageContainer {
+    /* next12からは div → span */
+    span {
+        position: static !important;
+    }
+    img {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+}
+.imageInfo {
+    cursor: pointer;
+    animation: show ease 1s 1 alternate none running;
+    .info {
+        position: relative;
+    }
+    .info_ {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        margin-left: 10px;
+    }
+    .info:not(.imageInfo:hover .info) {
+        display: none;
+    }
+}
+@keyframes show {
+    0% {
+        filter: blur(350px);
+    }
+    100% {
+        filter: blur(0px)
+    }
+}

@@ -1,0 +1,12 @@
+.info {
+    position: absolute;
+    top: 0;
+    padding: 5px;
+    p {
+        margin: 0;
+        color: #fff;
+    }
+    p::selection {
+        background: #000;
+    }
+}

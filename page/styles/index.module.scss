@@ -1,0 +1,42 @@
+.modal {
+    width: 95%;
+    height: fit-content;
+    max-height: calc(100% - 20px);
+    position: absolute;
+    bottom: 0;
+    right: 2.5%;
+    border-radius: 3px 3px 0 0;
+    background-color: transparent;
+    overflow: auto;
+    animation: show ease 1s 1 alternate none running;
+    outline: none;
+    .modal_ {
+        width: 100%;
+        padding: 10px;
+    }
+}
+.modal::-webkit-scrollbar {width: 5px;height: 5px;background-color: transparent;}
+.modal::-webkit-scrollbar-thumb {background-color: #ccc;border-radius: 3px;}
+.modal::-webkit-scrollbar-track {background-color: transparent;}
+@keyframes show {0% {height: 0;}100% {height: calc(100% - 20px);}}
+@keyframes show2 {0% {height: 0;}100% {height: calc(100% - 40px);}}
+@media (max-width: 600px) {
+    .modal {
+        width: 100%;
+        height: fit-content;
+        max-height: calc(100% - 40px);
+        right: 0;
+        animation: show2 ease 1s 1 alternate none running;
+    }
+}
+
+.main {
+    display: flex;
+    .container {
+        width: calc(100% - 50px);
+        margin-right: 10px;
+    }
+}
+.modal {
+    z-index: 100;
+}

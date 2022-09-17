@@ -1,0 +1,11 @@
+html {
+    overflow: scroll
+}
+::-webkit-scrollbar {
+    position: absolute;
+    background: transparent;
+    width: 8px;
+    display: none;
+}
+::-webkit-scrollbar-thumb {}
+::-webkit-scrollbar-track {}
