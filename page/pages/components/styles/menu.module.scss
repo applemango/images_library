@@ -17,6 +17,7 @@
     width: 250px;
 }
 .toggle {
+    cursor: pointer;
     position: relative;
     width: 40px;
     height: 40px;
@@ -62,6 +63,37 @@
     &::after {
         rotate: -45deg;
         bottom: 19px;
+    }
+}
+.open .link_button {
+    width: fit-content;
+    svg {
+        width: 40px;
+    }
+} 
+.link_button {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    width: 40px;
+    height: 40px;
+    svg {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-items: center;
+    }
+    p {
+        word-break: keep-all;
+        white-space: nowrap;
+        overflow: hidden;
+        margin: 0 0 0 3px;
+        font-size: 30px;
+        position: relative;
+        bottom: 0px;
+        font-weight: 600;
     }
 }
 .block {

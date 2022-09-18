@@ -8,6 +8,8 @@ type Props = {
     data: Array<Object>
     tag: string | undefined
     query: string | undefined
+    like: boolean | undefined
+    folder: number | undefined
 }
 const Images = ({line = 3, data, tag, query}:Props) => {
     const [lines, setLines]  = useState(new Array(line))
@@ -87,7 +89,7 @@ const Images = ({line = 3, data, tag, query}:Props) => {
         setLength(data.length)
         setLines(a)
         setL(line)
-    },[tag,query])
+    },[data,tag,query,tag,query])
     /*useEffect(() => {
         console.log(lines)
         lines.map((data:any, index:number) => {

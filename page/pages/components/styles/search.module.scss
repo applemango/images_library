@@ -16,7 +16,7 @@
     height: 30px;
     border-radius: 10px;
     font-size: 18px;
-    padding-left: 42px;
+    padding-left: 53px;
     transition: outline 0.3s ease;
     border: none;
     outline: none;
@@ -31,6 +31,13 @@
     margin: 10px 0;
     margin-bottom: 0;
 }
+.allCategories {
+    max-height: 250px;
+    overflow-y: auto;
+}
+.allCategories::-webkit-scrollbar {width: 5px;height: 5px;background-color: transparent;position: relative;display: block;}
+.allCategories::-webkit-scrollbar-thumb {background-color: #ccc;border-radius: 3px;}
+.allCategories::-webkit-scrollbar-track {background-color: transparent;}
 .blank {
     width: 2px;
     height: 39px;
@@ -68,6 +75,20 @@
     left: 10px;
     pointer-events: none;
     user-select: none;
+    button {
+        border: none;
+        outline: none;
+        background-color: transparent;
+        cursor: pointer;
+        pointer-events: auto;
+        height: 50px;
+        position: relative;
+        bottom: 14px;
+        .icon {
+            position: relative;
+            top: 2px;
+        }
+    }
     .label {
         position: relative;
         bottom: 0;

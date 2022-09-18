@@ -10,19 +10,182 @@
     }
 }
 .imageInfo {
-    cursor: pointer;
+    //cursor: pointer;
     animation: show ease 1s 1 alternate none running;
+    position: relative;
     .info {
-        position: relative;
+        position: absolute;
+        top: 0;
+        right: 0;
+        opacity: 1;
+        transition: opacity 0.3s ease;
     }
     .info_ {
-        position: absolute;
-        bottom: 0;
-        left: 0;
         margin-left: 10px;
+        display: flex;
+        padding: 5px;
     }
-    .info:not(.imageInfo:hover .info) {
-        display: none;
+    .info:not(.imageInfo:hover .info,.active) {
+        opacity: 0;
+        //display: none;
+    }
+    .like_button {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+        border: 1px solid #eee;
+        border: none;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+        //background-color: rgba(255, 255, 255, 0.5);
+        background-color: #fff;
+        .icon {
+            color: #EC407A;
+            fill: #EC407A;
+            //stroke: #EC407A;
+        }
+    }
+    .fileMenu {
+        margin-left: 5px;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        button {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #eee;
+            border: none;
+            box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+            //background-color: rgba(255, 255, 255, 0.5);
+            background-color: #fff;
+            border-radius: 5px;
+            svg {
+                color: #EC407A;
+                fill: #EC407A;
+                //stroke: #EC407A;
+            }
+        }
+    }
+    .fileMenu ~ div {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+    .fileMenu_main {
+        position: absolute;
+        padding: 5px;
+        border: none;
+        background-color: #fff;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        border-radius: 10px;
+        width: 300px;
+        z-index: 10;
+        margin-top: 5px;
+        .fileMenu_blank {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #eee;
+        }
+        p {
+            margin: 0;
+        }
+        > div:not(.fileMenu_folders,.fileMenu_blank),.fileMenu_folder {
+            cursor: pointer;
+            padding: 5px 5px;
+            border-radius: 5px;
+            margin: 5px 2px;
+            &:hover {
+                background-color: #eee;
+            }
+            &.fileMenu_remove {
+                color: #EC407A;
+            }
+        }
+        .fileMenu_folders {
+            .fileMenu_folder_ {
+                display: flex;
+                justify-content: space-between;
+            }
+            .active {
+                p:nth-child(1) {
+                    color: #0074de;
+                }
+            }
+            .fileMenu_folder {
+                display: flex;
+                width: 100%;
+            }
+        }
+    }
+    .fileMenu_color {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        position: relative;
+        top: 1.5px;
+        width: 18px;
+        > div {
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+        }
+    }
+    .fileMenu_data {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding-right: 3px;
+        .input {
+            outline: none;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+            text-decoration: underline;
+            animation: decoration linear .8s infinite alternate;
+        }
+    }
+    .icons {
+        display: flex;
+        align-items: center;
+    }
+    .fileMenu_folder_button {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0;
+        height: 31px;
+        width: 31px;
+        border: none;
+        padding: 5px;
+        margin: 2px 0;
+        border-radius: 5px;
+        background-color: transparent;
+        &:hover {
+            background-color: #eee;
+        }
+    }
+    svg.edit_icon {
+        fill: #212121;
+    }
+    svg.delete_icon {
+        fill: #EC407A;
+    }
+}
+@keyframes decoration {
+    0% {
+        text-decoration: none;
+    }
+    50% {
+        text-decoration: underline;
     }
 }
 @keyframes show {

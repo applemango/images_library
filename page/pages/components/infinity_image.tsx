@@ -8,8 +8,10 @@ import useWindowSize from '../../lib/components/useWindowSize';
 type Props = {
     tag: string | undefined
     query: string | undefined
+    like: boolean
+    folder: number
 }
-const InfinityImage = ({ tag, query }:Props) => {
+const InfinityImage = ({ tag, query, like, folder}:Props) => {
     const [images, setImages] = useState<Array<object>>([])
     const [loadOfTheEnd,setLoadOfTheEnd] = useState<boolean>(false)//loadEnd
     const [start, setStart] = useState<number>(0)
@@ -34,7 +36,7 @@ const InfinityImage = ({ tag, query }:Props) => {
         </div>
     )*/
     const loadMore = async () => {
-        const res = await getImageList(start, start+limit,tag,query)
+        const res = await getImageList(start, start+limit,tag,query,like,folder)
         const data = res
         if(!data || data.length < limit) {
             setLoadOfTheEnd(true)
@@ -43,7 +45,7 @@ const InfinityImage = ({ tag, query }:Props) => {
         setStart(start + limit)
     }
     const load = async () => {
-        const res = await getImageList(0, 0+limit,tag,query)
+        const res = await getImageList(0, 0+limit,tag,query,like,folder)
         const data = res
         if(!data || data.length < limit) {
             setLoadOfTheEnd(true)
@@ -60,11 +62,11 @@ const InfinityImage = ({ tag, query }:Props) => {
         setImages([])
         setLoadOfTheEnd(false)
         load()
-    },[tag,query])
+    },[tag,query,like,folder])
     return (
         <div>
             <InfiniteScroll loadMore={loadMore} hasMore={!loadOfTheEnd} loader={loader}>
-                <Images query={query} tag={tag} data={images} line={lines} />
+                <Images like={like} folder={folder} query={query} tag={tag} data={images} line={lines} />
             </InfiniteScroll>
         </div>
     )

@@ -16,10 +16,16 @@ Modal.setAppElement('#__next')
 import Menu from "./components/menu"
 import Search from "./components/search"
 
+import axios from "axios"
+import { getUrl } from "../lib/main"
+import { imageLike, imageUnlike } from "../lib/post"
+
 const Home: NextPage = () => {
     const [selectedFile, setSelectedFile]:any = useState(null);
     const [query, setQuery] = useState("");
     const [tag, setTag] = useState("");
+    const [like, setLike] = useState(false)
+    const [folder, setFolder] = useState(0)
     const send = () => {
         postImages(selectedFile)
     }
@@ -49,9 +55,9 @@ const Home: NextPage = () => {
                 <Menu />
                 <div className={styles.container}>
                     <h2 style={{marginLeft:20,color:"#2d2d2d"}}>Image Library</h2>
-                    <Search changeQuery={setQuery} query={query} changeTag={setTag} tag={tag} />
+                    <Search changeFolder={setFolder} folder={folder} changeLike={setLike} like={like} changeQuery={setQuery} query={query} changeTag={setTag} tag={tag} />
                     <FormImage selectedFile={selectedFile} setSelectedFile={setSelectedFile} multiple={true} submit={send}/>
-                    <InfinityImage query={query} tag={tag}/>
+                    <InfinityImage folder={folder} like={like} query={query} tag={tag}/>
                 </div>
             </div>
         </>
