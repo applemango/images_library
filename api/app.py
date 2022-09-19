@@ -15,6 +15,7 @@ import random
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
 from sqlalchemy import desc
+from sqlalchemy import and_
 
 from imageData import get_image_size, get_image_data
 
@@ -22,7 +23,9 @@ from typing import Any
 
 #like -done
 #folder -done
+#download (image)
 #timeline
+#user auth (don't need?)
 
 
 from dl import init_dl, get_prob
@@ -79,7 +82,7 @@ def get_all_folder():
         query = search
         ,tag = tags
         ,like = like == 'true'
-        ,folder = folder
+        #,folder = folder
         )
     r = {}
     for i in images:
@@ -301,15 +304,21 @@ def get_image_SLQTLF(
     ,like = None
     ,folder = None
     ):
-    images = Images.query.order_by(desc(Images.timestamp))
-    if query:
-        images = images.filter(Images.name.contains(query) | Images.name.contains(query.replace(" ","_")) | Images.category.contains(query))
-    if tag:
-        images = images.filter(Images.category==tag)
-    if like:
-        images = images.filter(Images.like == True)
-    if folder:
-        images = images.filter(Images.folder_id == folder)
+    images = Images.query.order_by(desc(Images.timestamp)) \
+        .filter(Images.name.contains(query) | Images.name.contains(query.replace(" ","_")) | Images.category.contains(query) if query else True) \
+        .filter(Images.category==tag if tag else True) \
+        .filter(Images.like == True if like else True) \
+        .filter(Images.folder_id == folder if folder and folder != -1 else True) \
+        .filter(and_(Images.folder_id != 0, Images.folder_id != None) if folder == -1 else True)
+    #images = Images.query.order_by(desc(Images.timestamp))
+    #if query:
+    #    images = images.filter(Images.name.contains(query) | Images.name.contains(query.replace(" ","_")) | Images.category.contains(query))
+    #if tag:
+    #    images = images.filter(Images.category==tag)
+    #if like:
+    #    images = images.filter(Images.like == True)
+    #if folder:
+    #    images = images.filter(Images.folder_id == folder)
     if limit:
         images = images.limit(limit).all()
     if start:

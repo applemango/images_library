@@ -18,6 +18,9 @@ const InfinityImage = ({ tag, query, like, folder}:Props) => {
     const [limit, setLimit] = useState<number>(10)
     const [width, height] = useWindowSize()
     const [lines, setLines] = useState(3)
+
+    const [first, setFirst] = useState(false)
+    const [f, setF] = useState(false)
     const loader = (
         <div key={1}></div>
     )
@@ -36,6 +39,10 @@ const InfinityImage = ({ tag, query, like, folder}:Props) => {
         </div>
     )*/
     const loadMore = async () => {
+        if(first != f) {
+            return
+        }
+        setF(true)
         const res = await getImageList(start, start+limit,tag,query,like,folder)
         const data = res
         if(!data || data.length < limit) {
@@ -43,8 +50,10 @@ const InfinityImage = ({ tag, query, like, folder}:Props) => {
         }
         setImages([...images, ...data])
         setStart(start + limit)
+        setFirst(true)
     }
     const load = async () => {
+        if(!first) return
         const res = await getImageList(0, 0+limit,tag,query,like,folder)
         const data = res
         if(!data || data.length < limit) {

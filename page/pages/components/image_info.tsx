@@ -174,8 +174,8 @@ const ImageInfo = ({src, data}:Props) => {
                                                             />
                                                         ):(
                                                             <>
-                                                                <p>{f.name}</p>
-                                                                <p>{f.count}</p>
+                                                                <p style={{color: f.id == folderId ? "#" + f.color : ""}}>{f.name}</p>
+                                                                <p style={{color: f.id == folderId ? "#" + f.color : ""}}>{f.count}</p>
                                                             </>
                                                         )}
                                                     </div>

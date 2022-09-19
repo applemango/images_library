@@ -45,11 +45,18 @@ const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, 
         }
         return 0
     }
-    useEffect(() => {
-        get()
-        get2()
-        get3()
-    },[])
+    const countAllFolders = (folders:[[string,[number,number]]]) => {
+        let r = 0
+        folders.forEach((d:[string,[number,number]],i:number) => {
+            r += d[1][1]
+        })
+        return r
+    }
+    //useEffect(() => {
+    //    get()
+    //    get2()
+    //    get3()
+    //},[])
     useEffect(() => {
         get(query,tag,like,folder)
         get2(query,tag,like,folder)
@@ -84,7 +91,7 @@ const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, 
                     </div>
                 </div>
             </div>
-            { categories &&
+            { categories && categories.length > 1 &&
                 <div className={`${styles.tags} ${showAllCategories ? styles.allCategories : ""}`}>
                     <div className={`${styles.tag} ${tag == "" ? styles.active : ""}`} onClick={() =>{
                         changeTag("")
@@ -92,6 +99,10 @@ const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, 
                     <div className={styles.blank} />
                     { categories.map((c:[string,number], i:number) => c[0] != "All category" && (i<21 || showAllCategories)? (
                         <div key={i} className={`${styles.tag} ${tag == c[0] ? styles.active : ""}`} onClick={() => {
+                            if(tag == c[0]) {
+                                changeTag("")
+                                return
+                            }
                             changeTag(c[0])
                         }}>
                             <p className={styles.categoryName}>{c[0]}</p><p className={styles.categoryNumber}>{c[1]}</p>
@@ -104,21 +115,33 @@ const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, 
                     )}
                 </div>
             }
-            <div className={`${styles.tag} ${like ? styles.active : ""}`} onClick={() => changeLike((d:boolean) => !d)}><p className={styles.categoryName}>My favorites</p><p className={styles.categoryNumber}>{likes}</p></div>
-            <div className={`${styles.tags}`}>
-                { folders &&
-                    folders.map((f:any,i:number) => (
-                        <div key={i} className={`${styles.tag} ${folder == f[1][0] ? styles.active : ""}`} onClick={() => {
-                            if(folder == f[1][0]) {
-                                changeFolder(0)
-                                return
-                            }
-                            changeFolder(f[1][0])
-                        }}>
-                            <p className={styles.categoryName}>{f[0]}</p><p className={styles.categoryNumber}>{f[1][1]}</p>
-                        </div>
-                    ))}
-            </div>
+            { !!likes &&
+                <div className={`${styles.tag} ${like ? styles.active : ""}`} onClick={() => changeLike((d:boolean) => !d)}><p className={styles.categoryName}>My favorites</p><p className={styles.categoryNumber}>{likes}</p></div>
+            }
+            { folders && folders.length > 0 &&
+                <div className={`${styles.tags}`}>
+                    <div className={`${styles.tag} ${folder == -1 ? styles.active : ""}`} onClick={() =>{
+                        if(folder == -1) {
+                            changeFolder(0)
+                            return
+                        }
+                        changeFolder(-1)
+                    }}><p className={styles.categoryName}>All Folder</p><p className={styles.categoryNumber}>{}</p>{countAllFolders(folders)}</div>
+                    <div className={styles.blank} />
+                    { folders &&
+                        folders.map((f:any,i:number) => (
+                            <div key={i} className={`${styles.tag} ${folder == f[1][0] ? styles.active : ""}`} onClick={() => {
+                                if(folder == f[1][0]) {
+                                    changeFolder(0)
+                                    return
+                                }
+                                changeFolder(f[1][0])
+                            }}>
+                                <p className={styles.categoryName}>{f[0]}</p><p className={styles.categoryNumber}>{f[1][1]}</p>
+                            </div>
+                        ))}
+                </div>
+            }
         </div>
     )
 }

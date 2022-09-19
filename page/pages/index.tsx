@@ -26,8 +26,11 @@ const Home: NextPage = () => {
     const [tag, setTag] = useState("");
     const [like, setLike] = useState(false)
     const [folder, setFolder] = useState(0)
-    const send = () => {
+    const [loading, setLoading] = useState(false)
+    const send = async () => {
+        setLoading(true)
         postImages(selectedFile)
+        setLoading(false)
     }
     const router = useRouter()
     useEffect(() => {
@@ -56,7 +59,9 @@ const Home: NextPage = () => {
                 <div className={styles.container}>
                     <h2 style={{marginLeft:20,color:"#2d2d2d"}}>Image Library</h2>
                     <Search changeFolder={setFolder} folder={folder} changeLike={setLike} like={like} changeQuery={setQuery} query={query} changeTag={setTag} tag={tag} />
-                    <FormImage selectedFile={selectedFile} setSelectedFile={setSelectedFile} multiple={true} submit={send}/>
+                    { !loading &&
+                        <FormImage selectedFile={selectedFile} setSelectedFile={setSelectedFile} multiple={true} submit={send}/>
+                    }
                     <InfinityImage folder={folder} like={like} query={query} tag={tag}/>
                 </div>
             </div>
