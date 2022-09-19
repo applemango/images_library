@@ -5,19 +5,24 @@ import Image from "./image"
 import { getUrl } from "../../lib/main"
 import Images from "./imagelist"
 import useWindowSize from '../../lib/components/useWindowSize';
+import InfScroll from "./infscroll"
+import isUseMouse from "../../lib/components/isUseMouse"
 type Props = {
     tag: string | undefined
     query: string | undefined
     like: boolean
     folder: number
+    reloadScroll: any
+    reload?: any
 }
-const InfinityImage = ({ tag, query, like, folder}:Props) => {
+const InfinityImage = ({ tag, query, like, folder, reloadScroll, reload}:Props) => {
     const [images, setImages] = useState<Array<object>>([])
     const [loadOfTheEnd,setLoadOfTheEnd] = useState<boolean>(false)//loadEnd
     const [start, setStart] = useState<number>(0)
     const [limit, setLimit] = useState<number>(10)
     const [width, height] = useWindowSize()
     const [lines, setLines] = useState(3)
+    const [useMouse,setUseMouse] = useState(isUseMouse())
 
     const [first, setFirst] = useState(false)
     const [f, setF] = useState(false)
@@ -71,12 +76,22 @@ const InfinityImage = ({ tag, query, like, folder}:Props) => {
         setImages([])
         setLoadOfTheEnd(false)
         load()
-    },[tag,query,like,folder])
+    },[tag,query,like,folder,reload])
+    useEffect(() => {
+        setUseMouse(isUseMouse())
+    },[])
     return (
         <div>
-            <InfiniteScroll loadMore={loadMore} hasMore={!loadOfTheEnd} loader={loader}>
-                <Images like={like} folder={folder} query={query} tag={tag} data={images} line={lines} />
-            </InfiniteScroll>
+            { useMouse &&
+                <InfiniteScroll loadMore={loadMore} hasMore={!loadOfTheEnd} loader={loader}>
+                    <Images like={like} folder={folder} query={query} tag={tag} data={images} line={lines} />
+                </InfiniteScroll>
+            }
+            { !useMouse &&
+                <InfScroll reload={reloadScroll} loadMore={loadMore} hasMore={!loadOfTheEnd}>
+                    <Images like={like} folder={folder} query={query} tag={tag} data={images} line={lines} />
+                </InfScroll>
+            }
         </div>
     )
 }

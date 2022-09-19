@@ -17,14 +17,15 @@ from werkzeug.utils import secure_filename
 from sqlalchemy import desc
 from sqlalchemy import and_
 
-from imageData import get_image_size, get_image_data
+from imageData import get_image_size, get_image_data, download
 
 from typing import Any
 
 #like -done
 #folder -done
+#upload url -done
 #download (image)
-#timeline
+#timeline (don't need?)
 #user auth (don't need?)
 
 
@@ -154,8 +155,14 @@ def folder_edit_name(id, name):
     folder = Folder.query.get(id)
     if not folder or not name or folder.name == name:
         return jsonify({"error": "you are and idiot (you are js?)"})
+    images = get_image_SLQTLF(
+        folder = folder.id
+    )
     folder.name = name
     db.session.add(folder)
+    for i in images:
+        i.folder_name = name
+        db.session.add(i)
     db.session.commit()
     return jsonify({"data":get_folder_return_object(folder)})
 
@@ -466,6 +473,45 @@ def post_file():
         db.session.commit()
         return jsonify(""),200
     return jsonify(""),400
+
+@app.route('/images/post/url', methods=['POST'])
+@cross_origin()
+def post_url():
+    url = json.loads(json.loads(request.get_data().decode('utf-8'))["body"])["url"]
+    random_str = generate_random_str(10)
+    filename = secure_filename(random_str+"_"+url)
+    x = download(url=url,downloadFolder=uploads_file_path,filename=filename)
+    if x == "Success":
+        category = get_prob(filename)
+        width, height = get_image_size(os.path.join(uploads_file_path, filename))
+        db.session.add(Images(
+            name=url
+            ,path=filename
+            ,category=category
+            ,width=width
+            ,height=height
+        ))
+        db.session.commit()
+        return jsonify("Success")
+    return jsonify({"error": "you are an idiot"})
+
+@app.route('/images/delete/<id>', methods=['DELETE'])
+@cross_origin()
+def delete_image(id):
+    try:
+        id = int(id)
+    except:
+        return jsonify({"error": "you are and idiot (you are js?"})
+    image = Images.query.get(id)
+    if not image:
+        return jsonify({"error": "you are and idiot (you are js?)"})
+    if image.folder_id:
+        folder = Folder.query.get(image.folder_id)
+        folder.item_count -= 1
+        db.session.add(folder)
+    db.session.delete(image)
+    db.session.commit()
+    return jsonify("success")
 
 def generate_random_str(length: int) -> str:
     a,r = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",""

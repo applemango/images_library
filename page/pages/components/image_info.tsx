@@ -7,7 +7,8 @@ import { useState, useEffect, useRef } from "react"
 import { imageLike, imageUnlike, createFolder, editFolderName, imageAddFolder, imageDeleteFolder } from "../../lib/post"
 import { getFolderListV1 } from "../../lib/get"
 import useClickAway from "../../lib/components/useClickAway"
-import { deleteFolder } from "../../lib/delete"
+import { deleteFolder, deleteImage } from "../../lib/delete"
+import { useRouter } from "next/router"
 type Props = {
     src: string
     data: {
@@ -38,6 +39,10 @@ const ImageInfo = ({src, data}:Props) => {
     const [folderId, setFolderId] = useState(data.folder_id)
     const [folderName, setFolderName] = useState(data.folder_name)
     const [folderColor, setFolderColor] = useState(data.folder_color)
+
+    const [deleted, setDeleted] = useState(false)
+
+    const router = useRouter()
 
     const getFolders = async () => {
         const res = await getFolderListV1()
@@ -96,6 +101,11 @@ const ImageInfo = ({src, data}:Props) => {
         })
         setFolders(r)
         const res = await deleteFolder(folder_id)
+    }
+    const delete_image = async (image_id:number) => {
+        setDeleted(true)
+        setShow(false)
+        const res = await deleteImage(image_id)
     }
     useEffect(() => {
         if(show) {
@@ -211,8 +221,27 @@ const ImageInfo = ({src, data}:Props) => {
                             </div>
                         </ActionMenu>
                     </div>
+                    <div className={styles.file}>
+                        <ActionMenu className={styles.fileMenu} setShow={setShow} icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M8 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM1.5 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm13 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path></svg>
+                        }>
+                            <div className={styles.fileMenu_main}>
+                                <div><Link href={`/view?id=${data.id}`}><a target="_blank"><p>view</p></a></Link></div>
+                                <div className={styles.fileMenu_remove} onClick={() => delete_image(data.id)}><p>delete image</p></div>
+                            </div>
+                        </ActionMenu>
+                    </div>
                 </div>
             </div>
+            { deleted && 
+            <div style={{
+                width: "100%"
+                ,height: "calc(100% + 6px)"
+                ,backgroundColor: "#fff"
+                ,zIndex: 2
+                ,position: "absolute"
+                ,top: "-3px"
+            }}></div>}
         </div>
     )
 }

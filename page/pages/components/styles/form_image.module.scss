@@ -41,6 +41,7 @@
         color: #fff;
         background-color: #fff;
         cursor: pointer;
+        color: transparent;
     }
     .input_file_ {
         pointer-events: none;
@@ -86,6 +87,7 @@
 }
 
 .submit {
+    text-align: center;
     padding: 10px 15px;
     display: flex;
     justify-content: space-between;
@@ -123,6 +125,9 @@ div.main__ div.input_file__ div.submits {
     display: inline-block;
     position: relative;
     top: 15px;
+    p {
+        text-align: center;
+    }
     > div {
         border: none;
         

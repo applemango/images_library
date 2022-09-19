@@ -1,0 +1,31 @@
+._ > div {
+    height: 100vh;
+    width: 100vw;
+} 
+.___ {
+    padding: 500px;
+}
+.main {
+    //width: 100vw;
+    //height: 100vh;
+    width: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 100px;
+}
+.img {
+    max-width: 90vw;
+    max-height: 90vh;
+    margin-right: 100px
+}
+
+.mouse {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #f1c40f;
+    border-radius: 100%;
+    pointer-events: none;
+}
