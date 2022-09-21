@@ -10,12 +10,15 @@ type Props = {
     query: string | undefined
     changeTag: Function
     tag: string | undefined
+    start: number
+    changeStart: Function
 }
-const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, changeFolder }:Props) => {
+const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, changeFolder, start, changeStart }:Props) => {
     //const [query, setQuery] = useState<any>(undefined)
     const [q, setQ] = useState<any>("")
     const [categories, setCategories] = useState<[[string,number]]>()
     const [showAllCategories, setShowAllCategories] = useState(false)
+    const [s,setS] = useState<any>(0)
     
     const [folders, setFolders] = useState<any>()
 
@@ -61,6 +64,10 @@ const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, 
         get(query,tag,like,folder)
         get2(query,tag,like,folder)
         get3(query,tag,like,folder)
+    },[query,tag,like,folder])
+    useEffect(() => {
+        setS(0)
+        changeStart(0)
     },[query,tag,like,folder])
     return (
         <div className={styles._}>
@@ -115,7 +122,7 @@ const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, 
                     )}
                 </div>
             }
-            { !!likes &&
+            { !!likes && likes > 0 &&
                 <div className={`${styles.tag} ${like ? styles.active : ""}`} onClick={() => changeLike((d:boolean) => !d)}><p className={styles.categoryName}>My favorites</p><p className={styles.categoryNumber}>{likes}</p></div>
             }
             { folders && folders.length > 0 &&
@@ -140,6 +147,51 @@ const Search = ({ changeQuery, query, changeTag, tag, like, changeLike, folder, 
                                 <p className={styles.categoryName}>{f[0]}</p><p className={styles.categoryNumber}>{f[1][1]}</p>
                             </div>
                         ))}
+                </div>
+            }
+            { categories && categories.length > 2 &&
+                <div className={styles.start} style={{display: 'flex',marginTop: '10px'}}>
+                    <div className={styles.searchBox} style={{width: '150px'}}>
+                        <input className={styles.searchInput} type="text"  onChange={(e) => {
+                            setS(e.target.value)
+                        }} value={s} onKeyPress={(e) => {
+                            if(e.key == "Enter") {
+                                console.log("aaa")
+                                e.preventDefault()
+                                changeStart(s)
+                            }
+                        }}  />
+                        <div className={styles.info}>
+                            <button onClick={() => {
+                                    changeStart(s)
+                            }}>
+                                <div className={styles.icon}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#000000" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                        <polyline points="16 3 20 7 16 11" />
+                                        <line x1="10" y1="7" x2="20" y2="7" />
+                                        <polyline points="8 13 4 17 8 21" />
+                                        <line x1="4" y1="17" x2="13" y2="17" />
+                                    </svg>
+                                </div>
+                            </button>
+                            <div className={`${styles.label_} ${s || s==0 ? styles.active : ""}`}>
+                                <span className={styles.label}>start</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{width: "calc(100% - 150px)"}}>
+                        <input className={styles.startInput} value={s} type="range" max={categories[0][1]} min={0} onChange={(e) => {
+                            setS(e.target.value)
+                        }} onMouseUp={(e) => {
+                            changeStart(s)
+                        }}/>
+                        <div style={{left: `calc(150px + ${s / categories[0][1] * 100}% - 10px - ${224 * (s / categories[0][1])}px)`}} className={styles.startInputInfo}>
+                            <div>
+                                <p>{s}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
         </div>

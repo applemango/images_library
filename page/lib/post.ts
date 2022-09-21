@@ -19,14 +19,16 @@ export async function postImages(files: File[], changeProgress?: Function) {
         const file = files[Number(i)]
         const formData = new FormData();
         formData.append("file", file);
-        const res = await axios.post(
-            getUrl("images/post"),
-            formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
+        try {
+            const res = await axios.post(
+                getUrl("images/post"),
+                formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
                 }
-            }
-        )
+            )
+        } catch (e) {console.log(e)}
         if(changeProgress) {
             changeProgress((n:number) => n+1)
         }

@@ -16,9 +16,7 @@ from flask import send_from_directory
 from werkzeug.utils import secure_filename
 from sqlalchemy import desc
 from sqlalchemy import and_
-
 from imageData import get_image_size, get_image_data, download
-
 from typing import Any
 
 #like -done
@@ -46,15 +44,88 @@ app.config.from_mapping(
     ,JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=3)
     ,JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     ,JWT_TOKEN_LOCATION = "headers"
-
     ,JSON_AS_ASCII = False
 )
+
 cors = CORS(app, responses={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
 migrate = Migrate(app, db)
 init_dl(uploads_file_path+"/{}")
-
+"""
+class User(db.Model):  # type: ignore
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(), nullable=False)
+    password = db.Column(db.String())
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+class TokenBlocklist(db.Model): # type: ignore
+    id = db.Column(db.Integer, primary_key=True)
+    jti = db.Column(db.String(36), nullable=False, index=True)
+    type = db.Column(db.String(16), nullable=False)
+    user_id = db.Column(db.ForeignKey('user.id'), default=lambda: get_current_user().id, nullable=False)
+    created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+@app.route('/register', methods=['POST'])
+@cross_origin()
+def register():
+    username = json.loads(json.loads(request.get_data().decode('utf-8'))["body"])["username"]
+    password = json.loads(json.loads(request.get_data().decode('utf-8'))["body"])["password"]
+    if password is None or username is None or password == "" or username == "": return jsonify({"msg": "password or username has not been entered"}), 400
+    if len(password) < 5: return jsonify({"msg": "password is too short"}), 400
+    if len(username) < 3: return jsonify({"msg": "username is too short"}), 400
+    if User.query.filter_by(username=username).first() is not None: return jsonify({"msg": "The username is already in use"}), 409
+    user = User(username=username)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify("create account")
+@app.route('/token', methods=['POST'])
+@cross_origin()
+def create_token():
+    username = json.loads(json.loads(request.get_data().decode('utf-8'))["body"])["username"]
+    password = json.loads(json.loads(request.get_data().decode('utf-8'))["body"])["password"]
+    user = User.query.filter_by(username=username).first()
+    if user is None or not user.check_password(password):
+        return jsonify({"msg": "Incorrect password or username"}), 401
+    access_token = create_access_token(identity=username)
+    refresh_token = create_refresh_token(identity=username)
+    return jsonify(access_token=access_token, refresh_token=refresh_token)
+@app.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+@cross_origin()
+def refresh():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity)
+    return jsonify(access_token=access_token)
+@app.route("/logout", methods=["DELETE"])
+@jwt_required(verify_type=False)
+@cross_origin()
+def modify_token():
+    token = get_jwt()
+    jti = token["jti"]
+    ttype = token["type"]
+    now = datetime.now(timezone.utc)
+    db.session.add(TokenBlocklist(jti=jti, type=ttype, created_at=now))
+    db.session.commit()
+    return jsonify(msg=f"{ttype.capitalize()} token successfully revoked")
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    u = User.query.filter_by(username=user).first()
+    if type(user) is int:
+        u = User.query.filter_by(id=user).first()
+    if u == None:return
+    return u.id
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return User.query.filter_by(id=identity).one_or_none()
+@jwt.token_in_blocklist_loader
+def token_block(_jwt_header, jwt_data):
+    if TokenBlocklist.query.filter_by(jti=jwt_data["jti"]).first():
+        return True
+    return False"""
 class Folder(db.Model):  # type: ignore
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(), nullable=False)
@@ -83,7 +154,6 @@ def get_all_folder():
         query = search
         ,tag = tags
         ,like = like == 'true'
-        #,folder = folder
         )
     r = {}
     for i in images:
@@ -95,11 +165,7 @@ def get_all_folder():
     sr = sorted(r.items(), key=lambda x: x[1])
     sr.reverse()
     return jsonify({"data":sr})
-    #folders = Folder.query.all()
-    #r = []
-    #for f in folders:
-    #    r.append(get_folder_return_object(f))
-    #return jsonify({"data":r}),200
+
 @app.route('/folder/get/all/v1', methods=['GET'])
 @cross_origin()
 def get_all_folder_v1():
@@ -113,7 +179,7 @@ def get_all_folder_v1():
 @cross_origin()
 def folder_create(folder_name):
     if not folder_name:
-        return jsonify({"error": "you are and idiot (you are js?"})
+        return jsonify({"error": "if not folder_name:"})
     color = request.args.get("color")
     if not color:
         color = "#ffffff"
@@ -131,10 +197,10 @@ def delete_folder(id):
     try:
         id = int(id)
     except:
-        return jsonify({"error": "you are and idiot (you are js?"})
+        return jsonify({"error": "try: id = int(id) except:"})
     folder = Folder.query.get(id)
     if not folder:
-        return jsonify({"error": "you are and idiot (you are js?)"})
+        return jsonify({"error": "if not folder:"})
     images = Images.query.filter_by(folder_id=folder.id).all()
     for i in images:
         i.folder_id = 0
@@ -151,10 +217,10 @@ def folder_edit_name(id, name):
     try:
         id = int(id)
     except:
-        return jsonify({"error": "you are and idiot (you are js?"})
+        return jsonify({"error": "try: id = int(id) except:"})
     folder = Folder.query.get(id)
     if not folder or not name or folder.name == name:
-        return jsonify({"error": "you are and idiot (you are js?)"})
+        return jsonify({"error": "if not folder or not name or folder.name == name"})
     images = get_image_SLQTLF(
         folder = folder.id
     )
@@ -174,11 +240,11 @@ def folder_add_image(folder_id, image_id):
         folder_id = int(folder_id)
         image_id = int(image_id)
     except:
-        return jsonify({"error": "you are and idiot (you are js?"})
+        return jsonify({"error": "try folder_id = ~~ image_id = ~~ except:"})
     folder = Folder.query.get(folder_id)
     image = Images.query.get(image_id)
-    if not folder and not image:
-        return jsonify({"error": "you are and idiot (you are js?"})
+    if not folder or not image:
+        return jsonify({"error": "if not folder or not image:"})
     if image.folder_id:
         before_folder = Folder.query.get(image.folder_id)
         if before_folder:
@@ -203,10 +269,10 @@ def folder_delete(image_id):
     try:
         image_id = int(image_id)
     except:
-        return jsonify({"error": "you are and idiot (you are js?"})
+        return jsonify({"error": "try: id = int(id) except:"})
     image = Images.query.get(image_id)
     if not image:
-        return jsonify({"error": "you are and idiot (you are js?)"})
+        return jsonify({"error": "if not image:"})
     if image.folder_id:
         folder = Folder.query.get(image.folder_id)
         folder.item_count -= 1
@@ -263,7 +329,7 @@ def image_get_like():
     images = get_image_SLQTLF(
         query=search
         ,tag=tags
-        ,like=True#like == "true"
+        ,like=True
         ,folder=folder
     ).all()
     return jsonify({"data":len(images)})
@@ -281,19 +347,17 @@ def image_like_helper(id,type:bool):
     try:
         id = int(id)
     except:
-        return jsonify({"error": "you are and idiot (you are js?"})
+        return jsonify({"error": "try: id = int(id) except:"})
     image = Images.query.get(id)
     if not image:
-        return jsonify({"error": "you are and idiot (you are js?)"})
+        return jsonify({"error": "if not image:"})
     image.like = type
     db.session.add(image)
     db.session.commit()
     return jsonify("success")
 
-
-
 def get_images(start:int=0,limit:int=10)->Images:
-    return Images.query.order_by(desc(Images.timestamp)).limit(limit).all()[start:]#.filter(Images.id >= start, Images.id <= limit).all()
+    return Images.query.order_by(desc(Images.timestamp)).limit(limit).all()[start:]
 def get_images_search(start:int=0,limit:int=10,query:str='')->Images:
     return Images.query.order_by(desc(Images.timestamp)).filter(Images.name.contains(query) | Images.name.contains(query.replace(" ","_")) | Images.category.contains(query)).limit(limit).all()[start:]
 def get_images_tag(start:int=0,limit:int=10,query:str='')->Images:
@@ -303,33 +367,15 @@ def get_images_tag_search(start:int=0,limit:int=10,query:str='',tag:str=''):
 def get_images_like(start:int=0, limit:int=10):
     return Images.query.order_by(Images.timestamp).filter(Images.like == True).limit(limit).all()[start:]
 
-def get_image_SLQTLF(
-    start = None
-    ,limit = None
-    ,query = None
-    ,tag = None
-    ,like = None
-    ,folder = None
-    ):
+def get_image_SLQTLF(start = None ,limit = None ,query = None ,tag = None ,like = None ,folder = None):
     images = Images.query.order_by(desc(Images.timestamp)) \
         .filter(Images.name.contains(query) | Images.name.contains(query.replace(" ","_")) | Images.category.contains(query) if query else True) \
         .filter(Images.category==tag if tag else True) \
         .filter(Images.like == True if like else True) \
         .filter(Images.folder_id == folder if folder and folder != -1 else True) \
         .filter(and_(Images.folder_id != 0, Images.folder_id != None) if folder == -1 else True)
-    #images = Images.query.order_by(desc(Images.timestamp))
-    #if query:
-    #    images = images.filter(Images.name.contains(query) | Images.name.contains(query.replace(" ","_")) | Images.category.contains(query))
-    #if tag:
-    #    images = images.filter(Images.category==tag)
-    #if like:
-    #    images = images.filter(Images.like == True)
-    #if folder:
-    #    images = images.filter(Images.folder_id == folder)
-    if limit:
-        images = images.limit(limit).all()
-    if start:
-        images = images[start:]
+    if limit: images = images.limit(limit).all()
+    if start: images = images[start:]
     return images
 
 @app.route("/images/get/list", methods=["GET"])
@@ -355,29 +401,9 @@ def get_image_list():
         ,like = like == 'true'
         ,folder = folder
         )
-    #if like == "true":
-    #    Images = get_images_like(start, limit)
-    #elif search and tags:
-    #    Images = get_images_tag_search(start,limit,search,tags)
-    #elif search:
-    #    Images = get_images_search(start,limit,search)
-    #elif tags:
-    #    Images = get_images_tag(start,limit,tags)
-    #else:
-    #    Images = get_images(start,limit)
-    #print(len(images))
     r = []
     for i in images:
         r.append(get_image_return_object(i))
-        #r.append({
-        #    "id":i.id,"name":i.name
-        #    ,"path":i.path
-        #    ,"extension":i.extension
-        #    ,"timestamp":i.timestamp
-        #    ,"url":"/images/get/path/{}".format(i.path)
-        #    ,"category":i.category
-        #    ,"width":i.width, "height":i.height
-        #    })
     return jsonify({"data":r}),200
 
 @app.route("/images/get/path/<path>", methods=["GET"])
@@ -403,15 +429,6 @@ def send_image_data(id):
     except:
         i = 1
     i = Images.query.get(int(id))
-    #r = {
-    #    "id":i.id,"name":i.name
-    #    ,"path":i.path
-    #    ,"extension":i.extension
-    #    ,"timestamp":i.timestamp
-    #    ,"url":"/images/get/path/{}".format(i.path)
-    #    ,"category":i.category
-    #    ,"width":i.width, "height":i.height
-    #    }
     r = get_image_return_object(i)
     return jsonify({"data":r})
 
@@ -420,22 +437,15 @@ def send_image_data(id):
 def send_category_data():
     try: search = request.args.get("search")
     except: search = None
-    try: tags = request.args.get("tag")
-    except: tags = None
     try: like = request.args.get("like")
     except: like = None
     try: folder = int(request.args.get("folder"))  # type: ignore
     except: folder = None
     images = get_image_SLQTLF(
         query=search
-        #,tag=tags タグ数を見るのによく考えたらtagは指定しなくて良かった
         ,like=like == "true"
         ,folder=folder
     ).all()
-    #if search:
-    #    images = Images.query.filter(Images.name.contains(search) | Images.name.contains(search.replace(" ","_")) | Images.category.contains(search)).all()
-    #else:
-    #    images = Images.query.all()
     r = {"All category": len(images)}
     for i in images:
         category = i.category
@@ -455,7 +465,7 @@ def post_file():
         return jsonify("file not found"), 400
     file = request.files["file"]
     if file.filename == "":
-        return jsonify("filemame not found"), 400
+        return jsonify("file not fined"), 400
     if file.filename and file and allowed_file(file.filename):
         random_str = generate_random_str(10)
         filename = secure_filename(random_str+"_"+file.filename)
@@ -493,7 +503,7 @@ def post_url():
         ))
         db.session.commit()
         return jsonify("Success")
-    return jsonify({"error": "you are an idiot"})
+    return jsonify({"error": "download error"})
 
 @app.route('/images/delete/<id>', methods=['DELETE'])
 @cross_origin()
@@ -501,10 +511,10 @@ def delete_image(id):
     try:
         id = int(id)
     except:
-        return jsonify({"error": "you are and idiot (you are js?"})
+        return jsonify({"error": "try: id = int(id) except:"})
     image = Images.query.get(id)
     if not image:
-        return jsonify({"error": "you are and idiot (you are js?)"})
+        return jsonify({"error": "if not image:"})
     if image.folder_id:
         folder = Folder.query.get(image.folder_id)
         folder.item_count -= 1
@@ -522,10 +532,4 @@ def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 if __name__ == '__main__':
-    #def addDB(data: list[Images]):
-    #    for d in data:
-    #        db.session.add(d)
-    #db.drop_all()
-    #db.create_all()
-    #db.session.commit()
     app.run(debug=True, host='0.0.0.0', port=5000)

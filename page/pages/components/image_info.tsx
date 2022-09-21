@@ -28,7 +28,6 @@ type Props = {
     }
 }
 const ImageInfo = ({src, data}:Props) => {
-    const [isLike, setIsLike] = useState(data.like)
     const [show, setShow] = useState(false)
     const [folders, setFolders] = useState<any>([])
     const [isEdit, setIsEdit] = useState(false)
@@ -36,9 +35,11 @@ const ImageInfo = ({src, data}:Props) => {
     const [editText, setEditText] = useState("")
     const ref = useRef(null)
 
-    const [folderId, setFolderId] = useState(data.folder_id)
-    const [folderName, setFolderName] = useState(data.folder_name)
-    const [folderColor, setFolderColor] = useState(data.folder_color)
+    const [isLike, setIsLike] = useState(data ? data.like : false)
+    const [id,setId] = useState(data ? data.id : 0)
+    const [folderId, setFolderId] = useState(data ? data.folder_id : 0)
+    const [folderName, setFolderName] = useState(data ? data.folder_name : "")
+    const [folderColor, setFolderColor] = useState(data ? data.folder_color : "")
 
     const [deleted, setDeleted] = useState(false)
 
@@ -119,7 +120,7 @@ const ImageInfo = ({src, data}:Props) => {
     })
     return (
         <div className = {styles.imageInfo}>
-            <Link href={`/?id=${data.id}`} as={`/?id=${data.id}`}>
+            <Link href={`/?id=${id}`} as={`/?id=${id}`}>
                 <a>
                     <Image src={src} />
                 </a>
@@ -130,7 +131,7 @@ const ImageInfo = ({src, data}:Props) => {
                         <button className={styles.like_button} onClick={() => {
                             if(!isLike) {
                                 const l = async () => {
-                                    const res = await imageLike(data.id)
+                                    const res = await imageLike(id)
                                     if(res) {
                                         setIsLike(true)
                                     }
@@ -138,7 +139,7 @@ const ImageInfo = ({src, data}:Props) => {
                                 l()
                             } else {
                                 const ul = async () => {
-                                    const res = await imageUnlike(data.id)
+                                    const res = await imageUnlike(id)
                                     if(res) {
                                         setIsLike(false)
                                     }
@@ -167,7 +168,7 @@ const ImageInfo = ({src, data}:Props) => {
                                         { folders.map((f:any, i:number) => (
                                             <div key={i} className={`${styles.fileMenu_folder_} ${f.id == folderId ? styles.active : ""}`}>
                                                 <div className={styles.fileMenu_folder} onClick={() => {
-                                                    image_add_folder(i,f.id, data.id)
+                                                    image_add_folder(i,f.id, id)
                                                 }}>
                                                     <div className={styles.fileMenu_color}>
                                                         <div style={{backgroundColor: "#" + f.color}} />
@@ -226,7 +227,7 @@ const ImageInfo = ({src, data}:Props) => {
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M8 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM1.5 9a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm13 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path></svg>
                         }>
                             <div className={styles.fileMenu_main}>
-                                <div><Link href={`/view?id=${data.id}`}><a target="_blank"><p>view</p></a></Link></div>
+                                <div><Link href={`/view?id=${id}`}><a target="_blank"><p>view</p></a></Link></div>
                                 <div className={styles.fileMenu_remove} onClick={() => delete_image(data.id)}><p>delete image</p></div>
                             </div>
                         </ActionMenu>

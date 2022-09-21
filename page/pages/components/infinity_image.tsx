@@ -1,4 +1,5 @@
 import InfiniteScroll from 'react-infinite-scroller'; 
+import { useRouter } from "next/router"
 import { useState, useEffect } from "react";
 import { getImageList } from '../../lib/get';
 import Image from "./image"
@@ -14,8 +15,9 @@ type Props = {
     folder: number
     reloadScroll: any
     reload?: any
+    startLoading: number
 }
-const InfinityImage = ({ tag, query, like, folder, reloadScroll, reload}:Props) => {
+const InfinityImage = ({ tag, query, like, folder, reloadScroll, reload, startLoading}:Props) => {
     const [images, setImages] = useState<Array<object>>([])
     const [loadOfTheEnd,setLoadOfTheEnd] = useState<boolean>(false)//loadEnd
     const [start, setStart] = useState<number>(0)
@@ -23,6 +25,8 @@ const InfinityImage = ({ tag, query, like, folder, reloadScroll, reload}:Props) 
     const [width, height] = useWindowSize()
     const [lines, setLines] = useState(3)
     const [useMouse,setUseMouse] = useState(isUseMouse())
+    
+    const router = useRouter()
 
     const [first, setFirst] = useState(false)
     const [f, setF] = useState(false)
@@ -48,7 +52,8 @@ const InfinityImage = ({ tag, query, like, folder, reloadScroll, reload}:Props) 
             return
         }
         setF(true)
-        const res = await getImageList(start, start+limit,tag,query,like,folder)
+        router.replace(`/?start=${start}`)
+        const res = await getImageList(start, Number(start)+Number(limit),tag,query,like,folder)
         const data = res
         if(!data || data.length < limit) {
             setLoadOfTheEnd(true)
@@ -59,24 +64,24 @@ const InfinityImage = ({ tag, query, like, folder, reloadScroll, reload}:Props) 
     }
     const load = async () => {
         if(!first) return
-        const res = await getImageList(0, 0+limit,tag,query,like,folder)
+        const res = await getImageList(startLoading, Number(startLoading)+Number(limit),tag,query,like,folder)
         const data = res
         if(!data || data.length < limit) {
             setLoadOfTheEnd(true)
         }
         setImages([...data])
-        setStart(0 + limit)
+        setStart(Number(startLoading)+Number(limit))
     }
     useEffect(() => {
         setLines(Math.floor(width/450))
     })
     useEffect(() => {
-        setStart(0)
+        setStart(startLoading)
         setLimit(10)
         setImages([])
         setLoadOfTheEnd(false)
         load()
-    },[tag,query,like,folder,reload])
+    },[tag,query,like,folder,reload, startLoading])
     useEffect(() => {
         setUseMouse(isUseMouse())
     },[])

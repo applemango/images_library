@@ -24,10 +24,13 @@ import SmoothScroll from "./components/scroll"
 
 const Home: NextPage = () => {
     const [selectedFile, setSelectedFile]:any = useState(null);
+
     const [query, setQuery] = useState("");
     const [tag, setTag] = useState("");
     const [like, setLike] = useState(false)
     const [folder, setFolder] = useState(0)
+    const [start, setStart] = useState(0)
+
     const [loading, setLoading] = useState(false)
     const [position, setPositions] = useState(0)
     const [url, setUrl] = useState("")
@@ -46,8 +49,6 @@ const Home: NextPage = () => {
         setReload(Math.random())
     }
     const router = useRouter()
-    useEffect(() => {
-    })
     return (
         <>
             <Modal
@@ -72,9 +73,9 @@ const Home: NextPage = () => {
                 <SmoothScroll changePositions={setPositions}>
                     <div className={styles.container} style={{transform: 'translateX(40px)',marginBottom: '10px'}}>
                         <h2 style={{marginLeft:20,color:"#2d2d2d"}}>Image Library</h2>
-                        <Search changeFolder={setFolder} folder={folder} changeLike={setLike} like={like} changeQuery={setQuery} query={query} changeTag={setTag} tag={tag} />
+                        <Search start={start} changeStart={setStart} changeFolder={setFolder} folder={folder} changeLike={setLike} like={like} changeQuery={setQuery} query={query} changeTag={setTag} tag={tag} />
                         <FormImage loading_text={selectedFile && selectedFile.length > 1 ? `${now}/${selectedFile.length}` : "loading..."} loading={loading} changeLoading={setLoading} selectedFile={selectedFile} setSelectedFile={setSelectedFile} multiple={true} submit={send} url={url} submitUrl={send_} changeUrl={setUrl}/>
-                        <InfinityImage reload={reload} reloadScroll={position} folder={folder} like={like} query={query} tag={tag}/>
+                        <InfinityImage reload={reload} reloadScroll={position} startLoading={start} folder={folder} like={like} query={query} tag={tag}/>
                     </div>
                 </SmoothScroll>
             </div>
