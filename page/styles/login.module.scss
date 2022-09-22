@@ -1,0 +1,86 @@
+.main {
+    min-height: 100vh;
+    padding: 4rem 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fcfdff;
+    margin: 0 0;
+    .title {
+        user-select: none;
+        font-size: 24px;
+        color: #696969;
+    }
+    .main_:hover {
+        box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
+        border: 1px solid #fff;
+    }
+    .main_ {
+        width: 300px;
+        padding: 50px 50px 20px 50px;
+        background-color: #fff;
+        border-radius: 5px;
+        border: 1px solid #eee;
+        transition: all .5s;
+        .text {
+            position: absolute;
+            pointer-events: none;
+            p {
+                margin: 0;
+                user-select: none;
+                position: relative;
+                bottom: 13px;
+                color: #696969;
+            }
+        }
+        .errorMessage {
+            margin: 0;
+            position: relative;
+            bottom: 15px;
+            color: #f30032;
+            color: #e74c3c;
+        }
+        input {
+            width: 100%;
+            height: 35px;
+            margin-bottom: 30px;
+            margin-top: 15px;
+            /*border: none;*/
+            outline: none;
+            /*background-color: #eee;*/
+            border: 1px solid #eee;
+            border-radius: 3px;
+            padding-left: 10px;
+            font-size: 16px;
+            color: #696969;
+        }
+        button {
+            width: 100%;
+            height: 35px;
+            background-color: #0070f3;
+            color: #fff;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+        }
+    }
+    .hone_Sign {
+        display: flex;
+        width: 125px;
+        margin: 20px auto;
+        .changeMode {
+            cursor: pointer;
+        }
+        p {
+            margin: 0 10px;
+            user-select: none;
+            color: #999;
+        }
+        a {
+            cursor: pointer;
+            color: #0070f3;
+        }
+    }
+}

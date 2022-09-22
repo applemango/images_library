@@ -9,6 +9,7 @@ import { getFolderListV1 } from "../../lib/get"
 import useClickAway from "../../lib/components/useClickAway"
 import { deleteFolder, deleteImage } from "../../lib/delete"
 import { useRouter } from "next/router"
+import isUseMouse from "../../lib/components/isUseMouse"
 type Props = {
     src: string
     data: {
@@ -40,6 +41,8 @@ const ImageInfo = ({src, data}:Props) => {
     const [folderId, setFolderId] = useState(data ? data.folder_id : 0)
     const [folderName, setFolderName] = useState(data ? data.folder_name : "")
     const [folderColor, setFolderColor] = useState(data ? data.folder_color : "")
+
+    const [useMouse, setUseMouse] = useState(isUseMouse())
 
     const [deleted, setDeleted] = useState(false)
 
@@ -125,7 +128,7 @@ const ImageInfo = ({src, data}:Props) => {
                     <Image src={src} />
                 </a>
             </Link>
-            <div className={`${styles.info} ${show ? styles.active : ""}`}>
+            <div className={`${styles.info} ${show ? styles.active : ""} ${useMouse ? styles.active : ""}`}>
                 <div className={styles.info_}>
                     <div className={styles.like}>
                         <button className={styles.like_button} onClick={() => {

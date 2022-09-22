@@ -1,10 +1,13 @@
 import Link from "next/link"
 import { useState, useEffect, useRef } from "react"
 import useClickAway from "../../lib/components/useClickAway"
+import { logout } from "../../lib/token"
 import styles from "./styles/menu.module.scss"
+import { useRouter } from "next/router"
 const Menu = () => {
     const [open, setOpen] = useState(false)
     const ref = useRef(null)
+    const router = useRouter()
     useClickAway(ref, () => {
         setOpen(false)
     })
@@ -23,6 +26,17 @@ const Menu = () => {
                             </a>
                         </Link>
                     </div>*/
+                }
+                { open &&
+                    <div>
+                        <button onClick={() => {
+                        const l2= async () => {
+                            const res = await logout()
+                            router.replace("/login")
+                        }
+                        l2()
+                        }}>logout</button>
+                    </div>
                 }
             </div>
             {open && (

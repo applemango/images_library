@@ -22,6 +22,8 @@ import { imageLike, imageUnlike } from "../lib/post"
 
 import SmoothScroll from "./components/scroll"
 
+import { isLoginAndLogin, logout } from '../lib/token';
+
 const Home: NextPage = () => {
     const [selectedFile, setSelectedFile]:any = useState(null);
 
@@ -36,6 +38,9 @@ const Home: NextPage = () => {
     const [url, setUrl] = useState("")
     const [now, setNow] = useState(0)
     const [reload, setReload] = useState(0)
+
+    const [login, setLogin] = useState(false)
+
     const send = async () => {
         const res = await postImages(selectedFile,setNow)
         setLoading(false)
@@ -49,6 +54,20 @@ const Home: NextPage = () => {
         setReload(Math.random())
     }
     const router = useRouter()
+    
+    useEffect(() => {
+        const l = async () => {
+            const d = await isLoginAndLogin()
+            console.log(d)
+            if(d) {
+                setLogin(true)
+                return
+            }
+            router.replace("/login")
+        }
+        l()
+    },[])
+
     return (
         <>
             <Modal
@@ -71,12 +90,14 @@ const Home: NextPage = () => {
             <div className={styles.main}>
                 <Menu />
                 <SmoothScroll changePositions={setPositions}>
-                    <div className={styles.container} style={{transform: 'translateX(40px)',marginBottom: '10px'}}>
-                        <h2 style={{marginLeft:20,color:"#2d2d2d"}}>Image Library</h2>
-                        <Search start={start} changeStart={setStart} changeFolder={setFolder} folder={folder} changeLike={setLike} like={like} changeQuery={setQuery} query={query} changeTag={setTag} tag={tag} />
-                        <FormImage loading_text={selectedFile && selectedFile.length > 1 ? `${now}/${selectedFile.length}` : "loading..."} loading={loading} changeLoading={setLoading} selectedFile={selectedFile} setSelectedFile={setSelectedFile} multiple={true} submit={send} url={url} submitUrl={send_} changeUrl={setUrl}/>
-                        <InfinityImage reload={reload} reloadScroll={position} startLoading={start} folder={folder} like={like} query={query} tag={tag}/>
-                    </div>
+                    { login &&
+                        <div className={styles.container} style={{transform: 'translateX(40px)',marginBottom: '10px'}}>
+                            <h2 style={{marginLeft:20,color:"#2d2d2d"}}>Image Library</h2>
+                            <Search start={start} changeStart={setStart} changeFolder={setFolder} folder={folder} changeLike={setLike} like={like} changeQuery={setQuery} query={query} changeTag={setTag} tag={tag} />
+                            <FormImage loading_text={selectedFile && selectedFile.length > 1 ? `${now}/${selectedFile.length}` : "loading..."} loading={loading} changeLoading={setLoading} selectedFile={selectedFile} setSelectedFile={setSelectedFile} multiple={true} submit={send} url={url} submitUrl={send_} changeUrl={setUrl}/>
+                            <InfinityImage reload={reload} reloadScroll={position} startLoading={start} folder={folder} like={like} query={query} tag={tag}/>
+                        </div>
+                    }
                 </SmoothScroll>
             </div>
         </>

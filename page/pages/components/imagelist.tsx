@@ -3,6 +3,8 @@ import {useEffect, useRef} from 'react';
 import Image from "./image"
 import ImageInfo from "./image_info"
 import { getUrl } from "../../lib/main"
+import { isLoginAndLogin } from "../../lib/token";
+import { useRouter } from "next/router";
 type Props = {
     line?: number
     data: Array<Object>
@@ -17,6 +19,9 @@ const Images = ({line = 3, data, tag, query}:Props) => {
     const [l,setL] = useState(line)
     //const lines = new Array(line)
     const Ref:any = useRef(lines.map(() => createRef()));
+
+    const router = useRouter()
+
     const getMinLine = (array:Array<any>) => {
         let min = Infinity
         let minLine = 0
@@ -98,13 +103,22 @@ const Images = ({line = 3, data, tag, query}:Props) => {
             })
         })
     })*/
+    useEffect(() => {
+        const l = async () => {
+            const res = await isLoginAndLogin()
+            if(!res) {
+                router.replace("/login")
+            }
+        }
+        l()
+    })
     return (
         <div style={{display:"flex"}}>
             { lines.map((data:any, i:number) => (
                 <div key={i} ref={Ref.current[i]} style={{width:`calc(100% / ${line})`,marginBottom:'25px'}}>
                     { Object.keys(data).map((d:any,j:number) => (
                         <div key={j} style={{width:"calc(100% - 10px)",marginRight:"5px",marginLeft:"5px",marginBottom: "10px"}}>
-                            <ImageInfo data={data[j]} src={getUrl(data[j].url)} />
+                            <ImageInfo data={data[j]} src={getUrl(data[j].url,true)} />
                         </div>
                     ))}
                 </div>
